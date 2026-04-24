@@ -1,0 +1,2633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全球 Fintech 行业月度分析报告 | {{YYYY}}年{{MM}}月</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://unpkg.com/topojson-client@3"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   Fintech 月报 - 四主题设计系统
+   Claude / Linear / Stripe / Apple
+   ============================================ */
+
+:root {
+  --spacing-unit: 8px;
+  --content-max-width: 1100px;
+}
+
+/* ============================================
+   Theme: Claude (Anthropic 官方风格)
+   暖羊皮纸 + 陶土色 + Serif标题 + 精致层级
+   ============================================ */
+[data-theme="claude"] {
+  /* 背景层级 - 从深到浅 */
+  --color-bg: #f5f4ed;
+  --color-bg-elevated: #f9f8f3;
+  --color-surface: #ffffff;
+
+  /* 文字层级 - 从强到弱 */
+  --color-text-primary: #141413;
+  --color-text-secondary: #5e5d59;
+  --color-text-tertiary: #87867f;
+  --color-text-muted: #a39e98;
+
+  /* 强调色 - 陶土 */
+  --color-accent: #c96442;
+  --color-accent-light: rgba(201, 100, 66, 0.06);
+  --color-accent-medium: rgba(201, 100, 66, 0.12);
+  --color-accent-hover: #b35a3a;
+
+  /* 边框 - 温暖柔和 */
+  --color-border: #e8e6dc;
+  --color-border-light: #f0eee6;
+  --color-border-hover: #d1cfc5;
+
+  /* 功能色 */
+  --color-success: #15803d;
+  --color-success-bg: rgba(21, 128, 61, 0.08);
+  --color-warning: #c2781b;
+  --color-warning-bg: rgba(194, 120, 27, 0.08);
+  --color-danger: #b45309;
+  --color-danger-bg: rgba(180, 83, 9, 0.08);
+
+  /* 阴影 - Ring shadow 系统 */
+  --shadow-ring: 0px 0px 0px 1px var(--color-border);
+  --shadow-ring-accent: 0px 0px 0px 1px var(--color-accent);
+  --shadow-elevated: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02);
+
+  /* 字体 */
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* 圆角 */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+/* ============================================
+   Theme: Linear
+   深色 + 紫色 + 工程极简
+   ============================================ */
+[data-theme="linear"] {
+  --color-bg: #0e0e0f;
+  --color-bg-elevated: #151516;
+  --color-surface: #1c1c1e;
+
+  --color-text-primary: #f7f8f8;
+  --color-text-secondary: #8a8f98;
+  --color-text-tertiary: #5e636e;
+  --color-text-muted: #4a4f5a;
+
+  --color-accent: #8b5cf6;
+  --color-accent-light: rgba(139, 92, 246, 0.12);
+  --color-accent-medium: rgba(139, 92, 246, 0.2);
+  --color-accent-hover: #7c3aed;
+
+  --color-border: #232529;
+  --color-border-light: #2a2d31;
+  --color-border-hover: #3f3f46;
+
+  --color-success: #10b981;
+  --color-success-bg: rgba(16, 185, 129, 0.12);
+  --color-warning: #f59e0b;
+  --color-warning-bg: rgba(245, 158, 11, 0.12);
+  --color-danger: #ef4444;
+  --color-danger-bg: rgba(239, 68, 68, 0.12);
+
+  --shadow-ring: 0px 0px 0px 1px var(--color-border);
+  --shadow-ring-accent: 0px 0px 0px 1px var(--color-accent);
+  --shadow-elevated: 0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(139,92,246,0.1);
+
+  --font-serif: Inter, sans-serif;
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+/* ============================================
+   Theme: Stripe
+   纯白 + 紫蓝 + 专业金融
+   ============================================ */
+[data-theme="stripe"] {
+  --color-bg: #ffffff;
+  --color-bg-elevated: #f6f9fc;
+  --color-surface: #ffffff;
+
+  --color-text-primary: #061b31;
+  --color-text-secondary: #425466;
+  --color-text-tertiary: #6c7990;
+  --color-text-muted: #8c9eb0;
+
+  --color-accent: #533afd;
+  --color-accent-light: rgba(83, 58, 253, 0.06);
+  --color-accent-medium: rgba(83, 58, 253, 0.12);
+  --color-accent-hover: #4434d4;
+
+  --color-border: #e5edf5;
+  --color-border-light: #f0f4f8;
+  --color-border-hover: #d1d9e0;
+
+  --color-success: #15be53;
+  --color-success-bg: rgba(21, 190, 83, 0.08);
+  --color-warning: #f59e0b;
+  --color-warning-bg: rgba(245, 158, 11, 0.08);
+  --color-danger: #ea2261;
+  --color-danger-bg: rgba(234, 34, 97, 0.08);
+
+  --shadow-ring: 0px 0px 0px 1px var(--color-border);
+  --shadow-ring-accent: 0px 0px 0px 1px var(--color-accent);
+  --shadow-elevated: 0 4px 24px rgba(50,50,93,0.1), 0 2px 8px rgba(0,0,0,0.04);
+
+  --font-serif: Inter, sans-serif;
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+/* ============================================
+   Theme: Apple
+   灰白 + 蓝色 + 精致简约
+   ============================================ */
+[data-theme="apple"] {
+  --color-bg: #f5f5f7;
+  --color-bg-elevated: #fafafc;
+  --color-surface: #ffffff;
+
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #6e6e73;
+  --color-text-tertiary: #86868b;
+  --color-text-muted: #a1a1a6;
+
+  --color-accent: #0071e3;
+  --color-accent-light: rgba(0, 113, 227, 0.06);
+  --color-accent-medium: rgba(0, 113, 227, 0.12);
+  --color-accent-hover: #0077ed;
+
+  --color-border: rgba(0,0,0,0.08);
+  --color-border-light: rgba(0,0,0,0.05);
+  --color-border-hover: rgba(0,0,0,0.12);
+
+  --color-success: #34c759;
+  --color-success-bg: rgba(52, 199, 89, 0.1);
+  --color-warning: #ff9500;
+  --color-warning-bg: rgba(255, 149, 0, 0.1);
+  --color-danger: #ff3b30;
+  --color-danger-bg: rgba(255, 59, 48, 0.1);
+
+  --shadow-ring: 0px 0px 0px 1px var(--color-border);
+  --shadow-ring-accent: 0px 0px 0px 2px var(--color-accent);
+  --shadow-elevated: 0 4px 20px rgba(0,0,0,0.08);
+
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+/* ============================================
+   基础样式
+   ============================================ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   主题切换器 - 左下角，不遮挡导航
+   ============================================ */
+.theme-switcher {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 10px 12px;
+  box-shadow: var(--shadow-elevated);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-switcher-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.3px;
+}
+
+.theme-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.theme-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s ease;
+}
+
+.theme-btn:hover {
+  transform: scale(1.1);
+}
+
+.theme-btn.active {
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.theme-btn[data-theme="claude"] {
+  background: linear-gradient(135deg, #f5f4ed 50%, #c96442 50%);
+}
+.theme-btn[data-theme="linear"] {
+  background: linear-gradient(135deg, #0e0e0f 50%, #8b5cf6 50%);
+}
+.theme-btn[data-theme="stripe"] {
+  background: linear-gradient(135deg, #ffffff 50%, #533afd 50%);
+}
+.theme-btn[data-theme="apple"] {
+  background: linear-gradient(135deg, #f5f5f7 50%, #0071e3 50%);
+}
+
+.theme-btn::after {
+  content: attr(data-label);
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  background: var(--color-surface);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+}
+
+.theme-btn:hover::after,
+.theme-btn.active::after {
+  opacity: 1;
+}
+
+/* ============================================
+   导航栏
+   ============================================ */
+.top-nav {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 18px 32px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: -0.3px;
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.nav-tab {
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  transition: all 0.15s ease;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}
+
+.nav-tab:hover {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+.nav-tab.active {
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+}
+
+.back-to-top {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  transition: all 0.15s ease;
+  font-weight: 500;
+}
+
+.back-to-top:hover {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
+}
+
+/* ============================================
+   内容容器
+   ============================================ */
+.content {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   Claude 风格: Executive Summary
+   ============================================ */
+.exec-summary {
+  background: var(--color-bg-elevated);
+  border-left: 3px solid var(--color-accent);
+  padding: 28px 32px;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  margin-bottom: 32px;
+}
+
+.exec-summary h2 {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-accent);
+  margin: 0 0 20px 0;
+  letter-spacing: -0.3px;
+}
+
+.exec-summary ol {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.exec-summary li {
+  margin-bottom: 14px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--color-text-primary);
+}
+
+.exec-summary li:last-child {
+  margin-bottom: 0;
+}
+
+.exec-summary strong {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+   原文引用样式
+   ============================================ */
+.quote-block {
+  background: var(--color-bg-elevated);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.quote-block::before {
+  content: '"';
+  font-size: 24px;
+  color: var(--color-accent);
+  line-height: 0;
+  vertical-align: -8px;
+  margin-right: 4px;
+}
+
+.quote-translation {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--color-border);
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+}
+
+.quote-translation::before {
+  content: "【译】";
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.quote-source {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-style: normal;
+}
+
+.quote-source a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.quote-source a:hover { text-decoration: underline; }
+
+/* ============================================
+   快速链接按钮
+   ============================================ */
+.quick-links {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.quick-link {
+  font-size: 12px;
+  color: var(--color-accent);
+  text-decoration: none;
+  padding: 4px 10px;
+  border: 1px solid var(--color-accent-light);
+  border-radius: 20px;
+  transition: all 0.15s ease;
+}
+
+.quick-link:hover {
+  background: var(--color-accent-light);
+  color: var(--color-accent-hover);
+}
+
+/* ============================================
+   世界地图可视化
+   ============================================ */
+.world-map-container {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.world-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.world-map-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.world-map-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot.high { background: var(--color-accent); }
+.legend-dot.medium { background: var(--color-warning); }
+.legend-dot.low { background: var(--color-text-muted); }
+
+.world-map {
+  width: 100%;
+  height: 400px;
+  position: relative;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.world-map-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* D3.js 地图样式 */
+.country {
+  fill: #e0e0e0;
+  stroke: #fff;
+  stroke-width: 0.5;
+  transition: fill 0.2s ease;
+}
+
+.country:hover { fill: #d4a89a; }
+
+/* 事件标记 */
+.event-marker-group {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.event-marker-group:hover .marker-circle { transform: scale(1.15); }
+
+.marker-circle {
+  fill: var(--color-accent);
+  stroke: #fff;
+  stroke-width: 2;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  transition: all 0.2s ease;
+}
+
+.marker-circle.high { fill: var(--color-accent); }
+.marker-circle.medium { fill: var(--color-warning); }
+.marker-circle.low { fill: var(--color-text-muted); }
+
+.marker-count {
+  font-size: 12px;
+  font-weight: 600;
+  fill: white;
+  text-anchor: middle;
+  pointer-events: none;
+  dominant-baseline: central;
+}
+
+/* 悬浮提示框 */
+.map-tooltip {
+  position: absolute;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 50;
+  min-width: 220px;
+}
+
+.map-tooltip.visible { opacity: 1; }
+
+.map-tooltip .tooltip-title {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.map-tooltip .tooltip-events {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.map-tooltip .tooltip-event {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.map-tooltip .tooltip-score {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* 旧版兼容 - 保留一段时间 */
+.map-marker {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.map-marker:hover {
+  transform: scale(1.2);
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: -0.4px;
+  margin: 0;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: var(--color-text-tertiary);
+  margin-top: 6px;
+}
+
+.trends-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.trend-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+}
+
+.trend-card:hover {
+  box-shadow: var(--shadow-elevated);
+  border-color: var(--color-border-hover);
+}
+
+/* 得分指示器 - 弱化样式 */
+.trend-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.score-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.trend-title {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0 0 8px 0;
+  letter-spacing: -0.2px;
+}
+
+.trend-desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* 元信息 - 小字灰色 */
+.trend-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.meta-item {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  letter-spacing: -0.2px;
+}
+
+.meta-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--color-text-muted);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+/* ============================================
+   字节财经竞争态势总结
+   ============================================ */
+.bytedance-summary {
+  background: var(--color-bg-accent);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 28px;
+  margin-bottom: 32px;
+}
+
+.bytedance-summary h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: var(--color-text-primary);
+}
+
+.section-subtitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 16px 0 12px 0;
+}
+
+.signal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.signal-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 13px;
+}
+
+.signal-list li:last-child {
+  border-bottom: none;
+}
+
+.window-tracker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.window-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--color-bg-primary);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.window-status {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.window-status-进入 {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.window-status-退出 {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.window-status-进入中 {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.window-timeline {
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.window-close-signal {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  flex: 1;
+}
+
+/* ============================================
+   非共识观察
+   ============================================ */
+.non-consensus {
+  background: var(--color-warning-bg);
+  border-left: 3px solid var(--color-warning);
+  padding: 24px 28px;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  margin-bottom: 32px;
+}
+
+.non-consensus h2 {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-warning);
+  margin: 0 0 16px 0;
+}
+
+.non-consensus ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.non-consensus li {
+  margin-bottom: 16px;
+  color: var(--color-text-primary);
+}
+
+.non-consensus li:last-child {
+  margin-bottom: 0;
+}
+
+.non-consensus strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.non-consensus p {
+  margin: 6px 0 0 0;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* ============================================
+   相关深度报告（概述 Tab 底部）
+   ============================================ */
+.related-reports {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 32px;
+}
+
+.related-reports h2 {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0 0 8px 0;
+}
+
+.related-reports > .section-subtitle {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0 0 20px 0;
+}
+
+/* ============================================
+   卡片容器
+   ============================================ */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0 0 20px 0;
+  letter-spacing: -0.3px;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+/* ============================================
+   事件列表 - 精致层级
+   ============================================ */
+.event-category-section {
+  margin-bottom: 16px;
+}
+.event-category-section + .event-category-section {
+  border-top: 1px dashed var(--color-border-subtle);
+  padding-top: 16px;
+}
+.event-category-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.event-category-title::before {
+  content: '';
+  width: 4px;
+  height: 18px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.event-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  transition: all 0.15s ease;
+  scroll-margin-top: 100px;
+}
+
+.event-item:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-ring);
+}
+
+.event-item.highlight {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.event-title {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+}
+
+.event-badges {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* 徽章 - 精致小字 */
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 10px;
+  letter-spacing: -0.2px;
+}
+
+.badge-primary {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+}
+
+.badge-success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.badge-warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.badge-danger {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+/* 评分徽章 - 弱化样式（带"评分"前缀） */
+.badge-score {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: -0.2px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-tertiary);
+}
+
+.badge-score::before {
+  content: "评分 ";
+  font-weight: 400;
+}
+
+.event-desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+/* 日期和区域标签 - 事件卡片头部下方 */
+.event-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.event-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+.event-tag-date {
+  background: var(--color-bg-accent);
+  color: var(--color-text-secondary);
+}
+.event-tag-region {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+}
+
+/* 事件元信息 - 弱化处理 */
+.event-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.event-source {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+}
+
+.event-date {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  letter-spacing: -0.2px;
+}
+
+.event-divider {
+  width: 3px;
+  height: 3px;
+  background: var(--color-border);
+  border-radius: 50%;
+}
+
+/* 原文链接链接 */
+.event-link {
+  font-size: 12px;
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.event-link:hover {
+  text-decoration: underline;
+  color: var(--color-accent-hover);
+}
+
+/* 事件标题链接 */
+.event-title a {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+.event-title a:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+/* ============================================
+   筛选器
+   ============================================ */
+.filter-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .filter-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filter-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.filter-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 14px;
+  letter-spacing: -0.2px;
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-tag {
+  padding: 6px 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  transition: all 0.15s ease;
+  font-weight: 500;
+}
+
+.filter-tag:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-ring);
+}
+
+.filter-tag.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+/* ============================================
+   统计卡片
+   ============================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-value {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: -0.5px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin-top: 6px;
+  letter-spacing: -0.2px;
+}
+
+/* ============================================
+   表格
+   ============================================ */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 12px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  border-bottom: 1px solid var(--color-border);
+  letter-spacing: -0.2px;
+}
+
+.data-table td {
+  padding: 14px;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover td {
+  background: var(--color-bg-elevated);
+}
+
+/* ============================================
+   深度分析框架
+   ============================================ */
+.analysis-framework {
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.analysis-framework h3 {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0 0 16px 0;
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .analysis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.analysis-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.analysis-item-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.analysis-item-content {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* ============================================
+   事件分析卡片新布局
+   ============================================ */
+.event-analysis-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.event-analysis-card .event-desc-section {
+  padding: 16px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  border-left: 3px solid var(--color-accent);
+}
+
+.event-analysis-card .event-desc-section .desc-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.event-analysis-card .event-desc-section .desc-text {
+  font-size: 14px;
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
+.event-analysis-card .analysis-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .event-analysis-card .analysis-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.event-analysis-card .analysis-split .analysis-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 引用样式 */
+.event-analysis-card .quote-block {
+  margin: 12px 0;
+  padding: 12px 16px;
+  background: var(--color-bg);
+  border-left: 3px solid var(--color-accent-light);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-style: italic;
+  color: var(--color-text-secondary);
+  position: relative;
+}
+
+.event-analysis-card .quote-block::before {
+  content: '"';
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-accent);
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  line-height: 1;
+}
+
+.event-analysis-card .quote-block .quote-text {
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.event-analysis-card .quote-block .quote-source {
+  margin-top: 6px;
+  padding-left: 20px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-style: normal;
+}
+
+
+/* ============================================
+   趋势列表 & 方法步骤（Tab 内容样式）
+   ============================================ */
+.trend-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0 0;
+}
+.trend-list li {
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  border-left: 3px solid var(--color-accent);
+}
+.method-steps {
+  padding-left: 20px;
+  margin: 12px 0 0 0;
+}
+.method-steps li {
+  padding: 8px 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.method-steps li strong {
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+   行业报告列表（相关报告 Tab 样式）
+   ============================================ */
+.report-list {
+  margin: 12px 0 0 0;
+}
+.report-item {
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-accent);
+}
+.report-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+.report-title-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: none;
+  flex: 1;
+  margin-right: 12px;
+}
+.report-title-link:hover {
+  text-decoration: underline;
+  color: var(--color-accent-hover);
+}
+.report-source-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.report-desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 4px 0 0 0;
+}
+.report-meta {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 6px;
+}
+.report-topics {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.report-topic-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--color-bg);
+  color: var(--color-text-tertiary);
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+}
+
+/* ============================================
+   响应式
+   ============================================ */
+@media (max-width: 768px) {
+  .theme-switcher {
+    top: auto;
+    bottom: 16px;
+    left: 16px;
+    right: auto;
+  }
+
+  .top-nav {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px 20px;
+  }
+
+  .nav-tabs {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .trends-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 20px;
+  }
+}
+
+/* ============================================
+   深色模式适配 (Linear)
+   ============================================ */
+[data-theme="linear"] .filter-tag {
+  background: #232529;
+  border-color: #2a2d31;
+}
+
+[data-theme="linear"] .event-item:hover {
+  box-shadow: 0 0 0 1px #3f3f46;
+}
+
+/* ============================================
+   Apple 特有样式
+   ============================================ */
+[data-theme="apple"] .filter-tag.active {
+  border-radius: 980px;
+}
+
+[data-theme="apple"] .back-to-top {
+  border-radius: 980px;
+}
+/* 宏观指标 */
+.macro-indicators {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+.macro-indicators h2 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+.macro-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+@media (min-width: 768px) {
+  .macro-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.macro-group {
+  background: var(--color-bg-elevated);
+  border-radius: 8px;
+  padding: 16px;
+}
+.macro-region {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.macro-subregion {
+  margin-top: 12px;
+  padding-left: 16px;
+  border-left: 3px solid var(--color-border-subtle);
+}
+.macro-subregion .macro-region {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+.macro-table {
+  font-size: 12px;
+  width: 100%;
+  table-layout: fixed;
+}
+.macro-table th {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 8px;
+  white-space: nowrap;
+}
+.macro-table td {
+  padding: 6px 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.macro-charts {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+.macro-charts h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.chart-container {
+  height: 350px;
+  position: relative;
+  margin-bottom: 12px;
+}
+.chart-canvas {
+  width: 100%;
+}
+.macro-note {
+  margin-top: 12px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.macro-data-note {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--color-bg);
+  border-radius: 8px;
+  border: 1px solid var(--color-border-light);
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  line-height: 1.7;
+}
+.macro-data-note strong { color: var(--color-text-secondary); font-size: 12px; }
+.macro-data-note ul { margin: 6px 0 0 18px; padding: 0; }
+.macro-data-note li { margin-bottom: 4px; }
+.macro-data-note a { color: var(--color-accent); text-decoration: none; }
+.macro-data-note a:hover { text-decoration: underline; }
+
+</style>
+</head>
+<body data-theme="claude">
+
+<!-- 主题切换器 -->
+<div class="theme-switcher">
+  <span class="theme-switcher-label">主题</span>
+  <div class="theme-buttons">
+    <button class="theme-btn active" data-theme="claude" data-label="Claude" onclick="switchTheme('claude')"></button>
+    <button class="theme-btn" data-theme="linear" data-label="Linear" onclick="switchTheme('linear')"></button>
+    <button class="theme-btn" data-theme="stripe" data-label="Stripe" onclick="switchTheme('stripe')"></button>
+    <button class="theme-btn" data-theme="apple" data-label="Apple" onclick="switchTheme('apple')"></button>
+  </div>
+</div>
+
+<!-- 导航栏 -->
+<div class="top-nav">
+  <div class="nav-title">全球 Fintech 行业月度分析报告 · {{YYYY}}年{{MM}}月</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="switchTab('overview')">概述</div>
+    <div class="nav-tab" onclick="switchTab('panorama')">全景扫描</div>
+    <div class="nav-tab" onclick="switchTab('events')">事件分析</div>
+    <div class="nav-tab" onclick="switchTab('trend')">趋势判断</div>
+    <div class="nav-tab" onclick="switchTab('sources')">信源分析</div>
+    <div class="nav-tab" onclick="switchTab('method')">方法说明</div>
+    <button class="back-to-top" onclick="scrollToTop()">↑ 顶部</button>
+  </div>
+</div>
+
+<!-- 内容区 -->
+<div class="content">
+
+<!-- 概述 Tab -->
+<div id="overview" class="tab-content active">
+
+  <!-- 宏观指标监测 -->
+  <div class="macro-indicators">
+    <h2>全球宏观指标监测</h2>
+    <div class="macro-grid">
+      <div class="macro-group">
+        <h3 class="macro-region">中国</h3>
+        <table class="data-table macro-table">
+          <thead>
+            <tr>
+              <th>指标</th>
+              <th>最新数值</th>
+              <th>环比</th>
+              <th>同比</th>
+              <th>数据来源</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{中国宏观指标行}}
+          </tbody>
+        </table>
+        <div class="macro-subregion">
+          <h4 class="macro-region">中国 — 香港地区</h4>
+          <table class="data-table macro-table">
+            <thead>
+              <tr>
+                <th>指标</th>
+                <th>最新数值</th>
+                <th>同比</th>
+                <th>数据来源</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{香港宏观指标行}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="macro-group">
+        <h3 class="macro-region">美国</h3>
+        <table class="data-table macro-table">
+          <thead>
+            <tr>
+              <th>指标</th>
+              <th>最新数值</th>
+              <th>同比</th>
+              <th>数据来源</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{美国宏观指标行}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 趋势图表 -->
+    <div class="macro-charts">
+      <h3>主要央行基准利率趋势</h3>
+      <div class="chart-container">
+        <canvas id="macroChart" class="chart-canvas"></canvas>
+      </div>
+      <p class="macro-note">{{宏观趋势解读}}</p>
+    </div>
+    <div class="macro-data-note">
+      <strong>数据说明：</strong>
+      <ul>
+        {{宏观指标数据来源说明}}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Executive Summary -->
+  <div class="exec-summary">
+    <h2>报告导览</h2>
+    <ol>
+      <li><strong>{{关键发现1标题}}</strong>：{{关键发现1描述}}</li>
+      <li><strong>{{关键发现2标题}}</strong>：{{关键发现2描述}}</li>
+      <li><strong>{{关键发现3标题}}</strong>：{{关键发现3描述}}</li>
+    </ol>
+  </div>
+
+  <!-- 核心趋势 -->
+  <div class="section-header">
+    <h2 class="section-title">本月三大核心拐点</h2>
+    <p class="section-subtitle">基于信源可信度、信息独特性和战略相关性的综合评估</p>
+  </div>
+
+  <div class="trends-grid">
+    <!-- 趋势卡片示例 -->
+    <div class="trend-card">
+      <div class="trend-score">
+        <span class="badge-score">{{评分}}</span>
+        <div class="score-bar"><div class="score-bar-fill" style="width: {{评分}}%"></div></div>
+      </div>
+      <h3 class="trend-title">{{趋势标题}}</h3>
+      <p class="trend-desc">{{趋势描述}}</p>
+      <div class="trend-meta">
+        <span class="meta-item">{{地区}}</span>
+        <span class="meta-dot"></span>
+        <span class="meta-item">{{类别}}</span>
+        <span class="meta-dot"></span>
+        <span class="meta-item">{{日期}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 世界地图 -->
+  <div class="world-map-container" id="worldMap">
+    <div class="world-map-header">
+      <div>
+        <h3 class="world-map-title">全球资讯分布</h3>
+        <p class="world-map-subtitle">圆圈数字表示该地区事件数量，悬停查看详情</p>
+      </div>
+      <div class="world-map-legend">
+        <div class="legend-item"><div class="legend-dot high"></div>高优先级 (≥80分)</div>
+        <div class="legend-item"><div class="legend-dot medium"></div>中优先级 (60-79分)</div>
+        <div class="legend-item"><div class="legend-dot low"></div>一般关注 (&lt;60分)</div>
+      </div>
+    </div>
+    <div class="world-map">
+      <svg class="world-map-svg" id="mapSvg"></svg>
+      <div class="map-tooltip" id="hoverTooltip">
+        <div class="tooltip-title" id="tooltipTitle"></div>
+        <div class="tooltip-events" id="tooltipEvents"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 字节财经竞争态势总结 -->
+  <div class="bytedance-summary">
+    <h2>字节财经月度竞争态势总结</h2>
+
+    <h3 class="section-subtitle">本月关键信号</h3>
+    <ul class="signal-list">
+      <li><strong>【信号1】</strong> {{本月关键信号1}}</li>
+      <li><strong>【信号2】</strong> {{本月关键信号2}}</li>
+      <li><strong>【信号3】</strong> {{本月关键信号3}}</li>
+    </ul>
+
+    <h3 class="section-subtitle">按业务线的威胁与机会矩阵</h3>
+    <table class="data-table threat-opportunity-table">
+      <thead>
+        <tr>
+          <th>字节产品</th>
+          <th>本月最大威胁</th>
+          <th>威胁等级</th>
+          <th>本月最大机会</th>
+          <th>机会等级</th>
+          <th>本月行动建议</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>抖音支付</td>
+          <td>{{抖音支付威胁}}</td>
+          <td><span class="badge badge-{{威胁等级1}}">{{威胁等级1}}</span></td>
+          <td>{{抖音支付机会}}</td>
+          <td><span class="badge badge-{{机会等级1}}">{{机会等级1}}</span></td>
+          <td>{{抖音支付行动建议}}</td>
+        </tr>
+        <tr>
+          <td>放心借</td>
+          <td>{{放心借威胁}}</td>
+          <td><span class="badge badge-{{威胁等级2}}">{{威胁等级2}}</span></td>
+          <td>{{放心借机会}}</td>
+          <td><span class="badge badge-{{机会等级2}}">{{机会等级2}}</span></td>
+          <td>{{放心借行动建议}}</td>
+        </tr>
+        <tr>
+          <td>月付(BNPL)</td>
+          <td>{{月付威胁}}</td>
+          <td><span class="badge badge-{{威胁等级3}}">{{威胁等级3}}</span></td>
+          <td>{{月付机会}}</td>
+          <td><span class="badge badge-{{机会等级3}}">{{机会等级3}}</span></td>
+          <td>{{月付行动建议}}</td>
+        </tr>
+        <tr>
+          <td>TikTok Shop支付</td>
+          <td>{{TikTokShop威胁}}</td>
+          <td><span class="badge badge-{{威胁等级4}}">{{威胁等级4}}</span></td>
+          <td>{{TikTokShop机会}}</td>
+          <td><span class="badge badge-{{机会等级4}}">{{机会等级4}}</span></td>
+          <td>{{TikTokShop行动建议}}</td>
+        </tr>
+        <tr>
+          <td>抖音保险平台</td>
+          <td>{{抖音保险威胁}}</td>
+          <td><span class="badge badge-{{威胁等级5}}">{{威胁等级5}}</span></td>
+          <td>{{抖音保险机会}}</td>
+          <td><span class="badge badge-{{机会等级5}}">{{机会等级5}}</span></td>
+          <td>{{抖音保险行动建议}}</td>
+        </tr>
+        <tr>
+          <td>香港SVF/钱包</td>
+          <td>{{香港SVF威胁}}</td>
+          <td><span class="badge badge-{{威胁等级6}}">{{威胁等级6}}</span></td>
+          <td>{{香港SVF机会}}</td>
+          <td><span class="badge badge-{{机会等级6}}">{{机会等级6}}</span></td>
+          <td>{{香港SVF行动建议}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="section-subtitle">竞争窗口期追踪</h3>
+    <div class="window-tracker">
+      <div class="window-item">
+        <span class="window-status window-status-{{窗口1状态}}">{{窗口1状态}}</span>
+        <strong>{{窗口1机会}}</strong>
+        <span class="window-timeline">剩余约{{窗口1时间}}</span>
+        <span class="window-close-signal">关闭信号：{{窗口1关闭信号}}</span>
+      </div>
+      <div class="window-item">
+        <span class="window-status window-status-{{窗口2状态}}">{{窗口2状态}}</span>
+        <strong>{{窗口2机会}}</strong>
+        <span class="window-timeline">剩余约{{窗口2时间}}</span>
+        <span class="window-close-signal">关闭信号：{{窗口2关闭信号}}</span>
+      </div>
+      <div class="window-item">
+        <span class="window-status window-status-{{窗口3状态}}">{{窗口3状态}}</span>
+        <strong>{{窗口3机会}}</strong>
+        <span class="window-timeline">剩余约{{窗口3时间}}</span>
+        <span class="window-close-signal">关闭信号：{{窗口3关闭信号}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 非共识观察 -->
+  <div class="non-consensus">
+    <h2>非共识观察</h2>
+    <ul>
+      <li>
+        <strong>{{观察标题}}</strong>
+        <p>{{观察描述}}</p>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 相关深度报告 & 咨询报告 -->
+  <div class="related-reports">
+    <h2>相关深度报告 & 咨询报告</h2>
+    <p class="section-subtitle">与本月核心趋势相关的顶级咨询机构报告，供延伸阅读参考</p>
+    <div class="report-list">
+      {{行业报告列表}}
+    </div>
+  </div>
+
+</div>
+<div id="panorama" class="tab-content">
+
+  <!-- 统计卡片 -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value">{{事件总数}}</div>
+      <div class="stat-label">本月事件</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{高评分事件}}</div>
+      <div class="stat-label">重点事件(≥80分)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{信源数量}}</div>
+      <div class="stat-label">信源数量</div>
+    </div>
+  </div>
+
+  <!-- 事件列表（按类别分组，由生成器填充） -->
+  {{事件列表}}
+
+</div>
+
+<!-- 事件分析 Tab -->
+<div id="events" class="tab-content">
+  <!-- 深度分析卡片 1：最高评分事件 -->
+  <div class="event-analysis-card" id="event-analysis-1">
+    <h3 class="card-title">{{事件1标题}}</h3>
+    <!-- 事件描述 -->
+    <div class="event-desc-section">
+      <div class="desc-label">事件概述</div>
+      <div class="desc-text">{{事件1描述}}</div>
+    </div>
+    <!-- 深度分析分栏 -->
+    <div class="analysis-split">
+      <div class="analysis-group">
+        <div class="analysis-item">
+          <div class="analysis-item-label">信号</div>
+          <div class="analysis-item-content">{{事件1信号}}</div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-label">背景</div>
+          <div class="analysis-item-content">{{事件1背景}}</div>
+        </div>
+      </div>
+      <div class="analysis-group">
+        <div class="analysis-item">
+          <div class="analysis-item-label">影响</div>
+          <div class="analysis-item-content">{{事件1影响}}</div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-label">缺口</div>
+          <div class="analysis-item-content">{{事件1缺口}}</div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-label">行动</div>
+          <div class="analysis-item-content">{{事件1行动}}</div>
+        </div>
+      </div>
+    </div>
+    <!-- 引用原文 -->
+    <div class="quote-block">
+      <div class="quote-text">{{事件1引用原文}}</div>
+      <div class="quote-source">来源：{{事件1来源名称}}</div>
+    </div>
+  </div>
+  <!-- 深度分析卡片 2：第二高评分事件 -->
+  <div class="event-analysis-card" id="event-analysis-2">
+    <h3 class="card-title">{{事件2标题}}</h3>
+    <div class="event-desc-section">
+      <div class="desc-label">事件概述</div>
+      <div class="desc-text">{{事件2描述}}</div>
+    </div>
+    <div class="analysis-split">
+      <div class="analysis-group">
+        <div class="analysis-item">
+          <div class="analysis-item-label">信号</div>
+          <div class="analysis-item-content">{{事件2信号}}</div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-label">背景</div>
+          <div class="analysis-item-content">{{事件2背景}}</div>
+        </div>
+      </div>
+      <div class="analysis-group">
+        <div class="analysis-item">
+          <div class="analysis-item-label">影响</div>
+          <div class="analysis-item-content">{{事件2影响}}</div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-label">缺口</div>
+          <div class="analysis-item-content">{{事件2缺口}}</div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-label">行动</div>
+          <div class="analysis-item-content">{{事件2行动}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block">
+      <div class="quote-text">{{事件2引用原文}}</div>
+      <div class="quote-source">来源：{{事件2来源名称}}</div>
+    </div>
+  </div>
+  <!-- 深度分析卡片 3：第三高评分事件 -->
+  <div class="event-analysis-card" id="event-analysis-3">
+    <h3 class="card-title">{{事件3标题}}</h3>
+    <div class="event-desc-section">
+      <div class="desc-label">事件概述</div>
+      <div class="desc-text">{{事件3描述}}</div>
+    </div>
+    <div class="analysis-split">
+      <div class="analysis-group">
+        <div class="analysis-item">
+          <div class="analysis-item-label">信号</div>
+          <div class="analysis-item-content">{{事件3信号}}</div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-label">背景</div>
+          <div class="analysis-item-content">{{事件3背景}}</div>
+        </div>
+      </div>
+      <div class="analysis-group">
+        <div class="analysis-item">
+          <div class="analysis-item-label">影响</div>
+          <div class="analysis-item-content">{{事件3影响}}</div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-label">缺口</div>
+          <div class="analysis-item-content">{{事件3缺口}}</div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-label">行动</div>
+          <div class="analysis-item-content">{{事件3行动}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block">
+      <div class="quote-text">{{事件3引用原文}}</div>
+      <div class="quote-source">来源：{{事件3来源名称}}</div>
+    </div>
+  </div>
+</div>
+
+<!-- 趋势判断 Tab -->
+<div id="trend" class="tab-content">
+  <!-- 趋势 1 -->
+  <div class="card" id="trend-1">
+    <h3 class="card-title">{{趋势1标题}}</h3>
+    <p class="card-desc">{{趋势1描述}}</p>
+    <ul class="trend-list">
+      <li>{{趋势1要点1}}</li>
+      <li>{{趋势1要点2}}</li>
+      <li>{{趋势1要点3}}</li>
+      <li>{{趋势1要点4}}</li>
+    </ul>
+  </div>
+  <!-- 趋势 2 -->
+  <div class="card" id="trend-2">
+    <h3 class="card-title">{{趋势2标题}}</h3>
+    <p class="card-desc">{{趋势2描述}}</p>
+    <ul class="trend-list">
+      <li>{{趋势2要点1}}</li>
+      <li>{{趋势2要点2}}</li>
+      <li>{{趋势2要点3}}</li>
+      <li>{{趋势2要点4}}</li>
+    </ul>
+  </div>
+  <!-- 趋势 3 -->
+  <div class="card" id="trend-3">
+    <h3 class="card-title">{{趋势3标题}}</h3>
+    <p class="card-desc">{{趋势3描述}}</p>
+    <ul class="trend-list">
+      <li>{{趋势3要点1}}</li>
+      <li>{{趋势3要点2}}</li>
+      <li>{{趋势3要点3}}</li>
+      <li>{{趋势3要点4}}</li>
+    </ul>
+  </div>
+  <!-- 趋势 4 -->
+  <div class="card" id="trend-4">
+    <h3 class="card-title">{{趋势4标题}}</h3>
+    <p class="card-desc">{{趋势4描述}}</p>
+    <ul class="trend-list">
+      <li>{{趋势4要点1}}</li>
+      <li>{{趋势4要点2}}</li>
+      <li>{{趋势4要点3}}</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 信源分析 Tab -->
+<div id="sources" class="tab-content">
+  <div class="card">
+    <h3 class="card-title">信源分布</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>信源级别</th>
+          <th>数量</th>
+          <th>占比</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>一级（官方监管）</td>
+          <td>{{一级信源数量}}</td>
+          <td>{{一级信源占比}}</td>
+          <td>{{一级信源说明}}</td>
+        </tr>
+        <tr>
+          <td>二级（企业官方/主流财经）</td>
+          <td>{{二级信源数量}}</td>
+          <td>{{二级信源占比}}</td>
+          <td>{{二级信源说明}}</td>
+        </tr>
+        <tr>
+          <td>三级（科技媒体/行业媒体）</td>
+          <td>{{三级信源数量}}</td>
+          <td>{{三级信源占比}}</td>
+          <td>{{三级信源说明}}</td>
+        </tr>
+        <tr>
+          <td>四级（博客/社区）</td>
+          <td>{{四级信源数量}}</td>
+          <td>{{四级信源占比}}</td>
+          <td>{{四级信源说明}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- 信源详细列表 -->
+  <div class="card">
+    <h3 class="card-title">信源明细</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>信源名称</th>
+          <th>级别</th>
+          <th>贡献事件数</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{信源明细分列表}}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 方法说明 Tab -->
+<div id="method" class="tab-content">
+  <div class="card">
+    <h3 class="card-title">评分方法</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>维度</th>
+          <th>权重</th>
+          <th>评分规则</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>信源可信度</td>
+          <td>25分</td>
+          <td>一级=25分 / 二级=20分 / 三级=15分 / 四级=10分</td>
+        </tr>
+        <tr>
+          <td>时间紧迫性</td>
+          <td>10分</td>
+          <td>本月=10分 / 上月=5分 / 更早=3分</td>
+        </tr>
+        <tr>
+          <td>信息独特性</td>
+          <td>25分</td>
+          <td>模型判断：独家=25 / 增量=20 / 已知=10</td>
+        </tr>
+        <tr>
+          <td>战略相关性</td>
+          <td>25分</td>
+          <td>模型判断：直接相关=25 / 间接=15 / 弱相关=5</td>
+        </tr>
+        <tr>
+          <td>影响持续性</td>
+          <td>10分</td>
+          <td>模型判断：长期=10 / 中期=7 / 短期=3</td>
+        </tr>
+        <tr>
+          <td>市场热度</td>
+          <td>5分</td>
+          <td>模型判断：高=5 / 中=3 / 低=1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3 class="card-title">工作流程</h3>
+    <ol class="method-steps">
+      <li><strong>Phase 1 - 一级信源抓取：</strong>直接从监管官网（HKMA、Fed、ECB等）抓取新闻</li>
+      <li><strong>Phase 2 - 二级信源搜索：</strong>103个查询覆盖所有核心公司，官网优先策略</li>
+      <li><strong>Phase 3 - 去重与完整性检查：</strong>基于URL去重，检查并购/新产品等关键事件是否遗漏</li>
+      <li><strong>Phase 4 - 六维评分：</strong>信源可信度+时间+独特性+相关性+持续性+热度</li>
+      <li><strong>Phase 5 - 深度分析：</strong>对≥80分事件进行信号/背景/影响/缺口/行动五维分析</li>
+      <li><strong>Phase 6 - 报告生成：</strong>Markdown + 交互式 HTML（4主题）</li>
+      <li><strong>Phase 7 - 质量校验：</strong>自动化脚本验证占位符/章节/链接</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3 class="card-title">数据验证</h3>
+    <p class="card-desc">本月共执行 {{实际查询数}} 个搜索查询，从 {{一级信源数}} 个一级信源和 {{二级信源数}} 个二级信源中提取 {{总事件数}} 条有效事件，其中 {{已验证事件数}} 条经过 WebFetch 原文验证。</p>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+// 主题切换
+function switchTheme(theme) {
+  document.body.setAttribute('data-theme', theme);
+  localStorage.setItem('fintech-report-theme', theme);
+
+  // 更新按钮状态
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === theme);
+  });
+}
+
+// 图表实例引用（避免重复创建）
+var macroChartInstance = null;
+
+// Tab切换
+function switchTab(tabId) {
+  // 隐藏所有tab内容
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.remove('active');
+  });
+
+  // 显示目标tab
+  const targetTab = document.getElementById(tabId);
+  if (targetTab) {
+    targetTab.classList.add('active');
+  }
+
+  // 更新导航状态 — 通过匹配 onclick 属性中的 tabId 来定位对应 tab 按钮
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.classList.remove('active');
+    const onclickAttr = tab.getAttribute('onclick');
+    if (onclickAttr && onclickAttr.includes("'" + tabId + "'")) {
+      tab.classList.add('active');
+    }
+  });
+
+  // 重新渲染图表和地图（从其他tab切回overview时）
+  if (tabId === 'overview') {
+    setTimeout(function() {
+      const canvas = document.getElementById('macroChart');
+      if (canvas && typeof Chart !== 'undefined') {
+        if (macroChartInstance) { macroChartInstance.destroy(); macroChartInstance = null; }
+        initMacroChart();
+      }
+      if (document.getElementById('mapSvg')) { initWorldMap(); }
+    }, 50);
+  }
+}
+
+// 跳转到指定Tab和锚点
+function jumpToTab(tabId, anchorId) {
+  // 切换Tab
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+
+  // 更新导航状态
+  const navTabs = document.querySelectorAll('.nav-tab');
+  navTabs.forEach(tab => {
+    if (tab.getAttribute('onclick') && tab.getAttribute('onclick').includes("'" + tabId + "'")) {
+      tab.classList.add('active');
+    }
+  });
+
+  // 重新渲染图表和地图（从其他tab切回overview时）
+  if (tabId === 'overview') {
+    setTimeout(function() {
+      const canvas = document.getElementById('macroChart');
+      if (canvas && typeof Chart !== 'undefined') {
+        if (macroChartInstance) { macroChartInstance.destroy(); macroChartInstance = null; }
+        initMacroChart();
+      }
+      if (document.getElementById('mapSvg')) { initWorldMap(); }
+    }, 50);
+  }
+
+  // 滚动到锚点
+  if (anchorId) {
+    setTimeout(() => {
+      const element = document.getElementById(anchorId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.classList.add('highlight');
+        setTimeout(() => element.classList.remove('highlight'), 2000);
+      }
+    }, 100);
+  }
+}
+
+// 跳转到事件（当前Tab内的锚点）
+function jumpToEvent(anchorId) {
+  const element = document.getElementById(anchorId);
+  if (element) {
+    // 找到该元素所在的Tab
+    let parentTab = element.closest('.tab-content');
+    if (parentTab) {
+      const tabId = parentTab.id;
+      jumpToTab(tabId, anchorId);
+    }
+  }
+}
+
+// 回到顶部
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==================== 世界地图渲染（D3.js + Natural Earth projection） ====================
+function initWorldMap() {
+  // 检查 D3.js 和 topojson 是否可用（国内 CDN 可能被屏蔽）
+  if (typeof d3 === 'undefined' || typeof topojson === 'undefined') {
+    console.warn('D3.js 或 topojson 未加载，地图无法显示');
+    const svgEl = document.getElementById('mapSvg');
+    if (svgEl) {
+      svgEl.innerHTML = '<text x="480" y="190" text-anchor="middle" fill="#999" font-size="14" font-family="sans-serif">地图需要 D3.js，但 CDN 加载失败</text><text x="480" y="215" text-anchor="middle" fill="#bbb" font-size="12" font-family="sans-serif">请检查网络是否能访问 d3js.org 和 unpkg.com</text>';
+    }
+    return;
+  }
+
+  try {
+  const width = 960;
+  const height = 400;
+
+  const svg = d3.select('#mapSvg')
+    .attr('viewBox', `0 0 ${width} ${height}`)
+    .attr('preserveAspectRatio', 'xMidYMid slice');
+
+  // Natural Earth projection（适合展示全球数据）
+  const projection = d3.geoNaturalEarth1()
+    .scale(160)
+    .translate([width / 2, height / 2]);
+
+  const path = d3.geoPath().projection(projection);
+
+
+  // 地区事件数据（经纬度 + 事件数量 + 最高评分 + 事件详情列表）
+  // ⚠️ 生成报告时必须按实际统计数据替换下方 regionData
+  const regionData = {
+    us: { name: '美国', lat: 37.09, lon: -95.71, count: 2, maxScore: 95, events: [
+      { title: '事件标题', score: 95, url: '事件URL' },
+      { title: '事件标题', score: 85, url: '事件URL' }
+    ]},
+    cn: { name: '中国大陆', lat: 35.86, lon: 104.19, count: 1, maxScore: 85, events: [
+      { title: '事件标题', score: 85, url: '事件URL' }
+    ]},
+    hk: { name: '中国香港', lat: 22.31, lon: 114.16, count: 1, maxScore: 88, events: [
+      { title: '事件标题', score: 88, url: '事件URL' }
+    ]},
+    sg: { name: '新加坡', lat: 1.35, lon: 103.81, count: 1, maxScore: 82, events: [
+      { title: '事件标题', score: 82, url: '事件URL' }
+    ]},
+    vn: { name: '越南', lat: 14.05, lon: 108.27, count: 1, maxScore: 78, events: [
+      { title: '事件标题', score: 78, url: '事件URL' }
+    ]},
+    uk: { name: '英国', lat: 55.38, lon: -3.44, count: 1, maxScore: 75, events: [
+      { title: '事件标题', score: 75, url: '事件URL' }
+    ]},
+    eu: { name: '欧洲', lat: 50.11, lon: 14.44, count: 1, maxScore: 70, events: [
+      { title: '事件标题', score: 70, url: '事件URL' }
+    ]},
+    in: { name: '印度', lat: 20.59, lon: 78.96, count: 1, maxScore: 75, events: [
+      { title: '事件标题', score: 75, url: '事件URL' }
+    ]}
+  };
+
+  // 加载世界地图数据（110m分辨率，约120KB）
+  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+    .then(world => {
+      const countries = topojson.feature(world, world.objects.countries);
+
+      // 绘制国家
+      svg.append('g')
+        .selectAll('path')
+        .data(countries.features)
+        .enter().append('path')
+        .attr('class', 'country')
+        .attr('d', path);
+
+      // 绘制事件标记
+      Object.entries(regionData).forEach(([region, data]) => {
+        const [x, y] = projection([data.lon, data.lat]);
+        const radius = data.maxScore >= 90 ? 18 : data.maxScore >= 80 ? 15 : 12;
+        const priority = data.maxScore >= 80 ? 'high' : data.maxScore >= 60 ? 'medium' : 'low';
+
+        const marker = svg.append('g')
+          .attr('class', 'event-marker-group')
+          .attr('data-region', region)
+          .attr('transform', `translate(${x}, ${y})`);
+
+        marker.append('circle')
+          .attr('class', `marker-circle ${priority}`)
+          .attr('r', radius);
+
+        marker.append('text')
+          .attr('class', 'marker-count')
+          .attr('dy', '0.35em')
+          .text(data.count);
+      });
+    })
+    .catch(err => {
+      console.error('地图数据加载失败:', err);
+      svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', height / 2)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#999')
+        .text('地图数据加载失败，请刷新重试');
+    });
+
+  // Tooltip 交互（事件委托，避免闪烁）
+  const tooltip = document.getElementById('hoverTooltip');
+  const worldMap = document.getElementById('worldMap');
+  const tooltipTitle = document.getElementById('tooltipTitle');
+  const tooltipEvents = document.getElementById('tooltipEvents');
+
+  if (worldMap && tooltip) {
+    worldMap.addEventListener('mouseover', (e) => {
+      const marker = e.target.closest('.event-marker-group');
+      if (!marker) return;
+
+      const region = marker.getAttribute('data-region');
+      const data = regionData[region];
+
+      if (data) {
+        tooltipTitle.textContent = data.name + ' (' + data.count + ' 个事件)';
+
+        // 遍历该 region 的所有事件，不再硬编码
+        const events = data.events || [];
+        tooltipEvents.innerHTML = events.map(ev => {
+          const priority = ev.score >= 80 ? 'high' : ev.score >= 60 ? 'medium' : 'low';
+          const colors = { high: '#c96442', medium: '#c9a227', low: '#8b8b8b' };
+          return `
+            <div class="tooltip-event">
+              <span class="tooltip-event-name"><a href="${ev.url || '#'}" target="_blank" rel="noopener">${ev.title}</a></span>
+              <span class="tooltip-score" style="border-color: ${colors[priority]}; color: ${colors[priority]}">${ev.score}分</span>
+            </div>
+          `;
+        }).join('');
+
+        tooltip.classList.add('visible');
+      }
+    });
+
+    worldMap.addEventListener('mousemove', (e) => {
+      if (!tooltip.classList.contains('visible')) return;
+
+      const rect = worldMap.getBoundingClientRect();
+      const x = e.clientX - rect.left + 15;
+      const y = e.clientY - rect.top - 10;
+
+      const tooltipRect = tooltip.getBoundingClientRect();
+      let finalX = x;
+      let finalY = y;
+
+      if (x + tooltipRect.width > rect.width) {
+        finalX = x - tooltipRect.width - 20;
+      }
+      if (y + tooltipRect.height > rect.height) {
+        finalY = rect.height - tooltipRect.height - 10;
+      }
+
+      tooltip.style.left = finalX + 'px';
+      tooltip.style.top = finalY + 'px';
+    });
+
+    worldMap.addEventListener('mouseout', (e) => {
+      const marker = e.target.closest('.event-marker-group');
+      if (!marker) return;
+
+      // 检查是否真的离开了 marker（而不是进入了子元素）
+      if (marker.contains(e.relatedTarget)) return;
+
+      tooltip.classList.remove('visible');
+    });
+  }
+
+  } catch (err) {
+    console.error('地图初始化异常:', err);
+  }
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', function() {
+  // 恢复保存的主题
+  const savedTheme = localStorage.getItem('fintech-report-theme') || 'claude';
+  switchTheme(savedTheme);
+
+  // 初始化世界地图
+  if (document.getElementById('mapSvg')) {
+    initWorldMap();
+  }
+
+  // 初始化宏观指标图表
+  initMacroChart();
+});
+
+// 宏观指标图表初始化
+function initMacroChart() {
+  const canvas = document.getElementById('macroChart');
+  if (!canvas) return;
+
+  // 检查 Chart.js 是否可用
+  if (typeof Chart === 'undefined') {
+    canvas.parentElement.innerHTML = '<p style="color: var(--color-text-muted); text-align: center; padding: 20px;">图表渲染失败：Chart.js 未加载</p>';
+    return;
+  }
+
+  // 销毁旧实例避免重复创建
+  if (macroChartInstance) { macroChartInstance.destroy(); macroChartInstance = null; }
+
+  // {{宏观图表数据}} — 替换为实际数据
+  const macroData = {{宏观图表数据}};
+
+  macroChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: macroData.labels || ['Fed', 'ECB', 'PBC', 'BOE', 'BOJ'],
+      datasets: macroData.datasets || [
+        { label: '美联储（Fed）', data: macroData.fed || [], borderColor: '#c96442', tension: 0.3 },
+        { label: '欧洲央行（ECB）', data: macroData.ecb || [], borderColor: '#4a7fb5', tension: 0.3 },
+        { label: '中国央行（PBC）', data: macroData.pbc || [], borderColor: '#2a7d45', tension: 0.3 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'top' }
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          title: { display: true, text: '利率（%）' }
+        }
+      }
+    }
+  });
+}
+</script>
+
+</body>
+</html>

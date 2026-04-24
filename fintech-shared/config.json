@@ -1,0 +1,33 @@
+{
+  "base_dir": "~/.claude/fintech-reports",
+  "dirs": {
+    "output": "output",
+    "logs": "logs",
+    "data": "data"
+  },
+  "files": {
+    "phase1": "logs/phase1-primary-sources.json",
+    "phase2": "logs/phase2-secondary-sources.json",
+    "phase3": "logs/phase3-unique-events.json",
+    "phase4": "logs/phase4-scored-events.json",
+    "phase5": "logs/phase5-analysis.md",
+    "trend_tracker": "data/trend-tracker.json"
+  },
+  "phase2_batches": {
+    "A": {"name": "支付清结算", "batches": "1-2", "queries": 29, "output": "logs/phase2-batch-1-2.json"},
+    "B": {"name": "金融全品类", "batches": "3-7", "queries": 41, "output": "logs/phase2-batch-3-7.json"},
+    "C": {"name": "主题+监管", "batches": "8-12", "queries": 33, "output": "logs/phase2-batch-8-12.json"},
+    "D": {"name": "产品级功能发布", "batches": "13", "queries": 25, "output": "logs/phase2-batch-13.json"}
+  },
+  "expected_queries": 128,
+  "score_thresholds": {
+    "focus": 80,
+    "watch": 60
+  },
+  "collapse_strategy": {
+    "none_below": 20,
+    "by_category_below": 50,
+    "score_threshold_at": 50,
+    "threshold_score": 60
+  }
+}

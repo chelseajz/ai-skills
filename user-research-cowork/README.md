@@ -1,13 +1,13 @@
 # user-research-cowork
 
-协作式用户研究 skill。基于 [chelseajz/user-research-skill](https://github.com/chelseajz/user-research-skill) claude 分支，增强新手友好引导入口。
+协作式用户研究 skill。面向产品经理、运营、设计师等非用研背景同事，支持从选题到报告的完整研究流程。
 
-## 两个入口
+## 入口
 
 | 入口 | 适用场景 |
 |------|----------|
-| `/user-research` | 专业用研流程，细粒度控制 |
-| `/user-research-guided` | 非用研背景同事，引导式全流程 |
+| `/user-research-cowork` | 协作模式，自动识别身份选择合适流程 |
+| `/user-research-guided` | 纯引导模式（可选） |
 
 ## 核心特性
 

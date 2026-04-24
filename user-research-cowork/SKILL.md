@@ -1,9 +1,9 @@
 ---
-name: user-research
-description: 用户研究全流程支持。适用于互联网产品用户研究规划、定性编码、问卷分析、混合方法研究、报告撰写与审核。尤其适合产出具有明确证据链、置信度标注、局限性说明和专业可落地建议的高质量研究报告。ALWAYS use this skill when the user mentions 用户研究、UX研究、用户访谈、问卷分析、定性分析、访谈编码、研究报告、可用性研究、焦点小组、研究发现、混合方法、交叉表、语录库、编码本、案例集、访谈记录、讨论指南、研究方案、筛选器，或任何涉及将原始用户数据转化为结构化研究产出物的任务 — 即使用户没有明确说"研究"。同时提供新手友好引导入口（user-research-guided），非用研背景的同事也可快速上手。
+name: user-research-cowork
+description: 用户研究协作模式。支持产品经理、运营、设计师等非用研背景同事完成用户研究全流程，自动识别用户身份并选择合适模式（引导式/专业式）。包含研究设计避坑指南、Zone 模型人机协作、Gate 质量关卡。适用于研究规划、访谈编码、问卷分析、报告撰写。
 ---
 
-# User Research
+# User Research Cowork
 
 This skill turns broad "do research" requests into a disciplined workflow that protects evidence quality and report credibility.
 
